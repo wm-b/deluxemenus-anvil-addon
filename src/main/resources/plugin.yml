@@ -1,0 +1,7 @@
+name: DeluxeMenusAnvilAddon
+version: '${version}'
+main: inceris.deluxeanvil.DeluxeMenusAnvilAddon
+api-version: '1.21'
+description: Config-free anvil text placeholders for DeluxeMenus.
+depend: [DeluxeMenus, PlaceholderAPI]
+authors: [Inceris]

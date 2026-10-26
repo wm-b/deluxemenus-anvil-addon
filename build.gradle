@@ -1,0 +1,76 @@
+plugins {
+    id 'java'
+}
+
+group = 'inceris.deluxeanvil'
+version = '1.0.0'
+
+base {
+    archivesName = 'DeluxeMenuAnvilAddon'
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(21)
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = 'PaperMC'
+        url = uri('https://repo.papermc.io/repository/maven-public/')
+        content {
+            includeGroupByRegex 'io\\.papermc.*'
+            includeGroupByRegex 'com\\.mojang.*'
+            includeGroupByRegex 'net\\.md-5.*'
+        }
+    }
+    exclusiveContent {
+        forRepository {
+            maven {
+                name = 'Modrinth'
+                url = uri('https://api.modrinth.com/maven')
+            }
+        }
+        filter { includeGroup 'maven.modrinth' }
+    }
+}
+
+dependencies {
+    compileOnly 'io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT'
+    compileOnly 'maven.modrinth:deluxemenus:1.14.1-Release'
+    compileOnly 'maven.modrinth:placeholderapi:2.12.3'
+    compileOnly 'io.netty:netty-transport:4.1.97.Final'
+    testImplementation platform('org.junit:junit-bom:5.11.4')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
+    options.compilerArgs += ['-proc:none']
+}
+
+def pluginVersion = version.toString()
+processResources {
+    inputs.property 'version', pluginVersion
+    filesMatching('plugin.yml') {
+        expand(version: pluginVersion)
+    }
+}
+
+jar {
+    archiveFileName = "${base.archivesName.get()}_${pluginVersion.replace('.', '-')}.jar"
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+
+test {
+    useJUnitPlatform()
+}
+
+wrapper {
+    gradleVersion = '8.12.1'
+    distributionType = Wrapper.DistributionType.BIN
+    distributionSha256Sum = '8d97a97984f6cbd2b85fe4c60a743440a347544bf18818048e611f5288d46c94'
+}
